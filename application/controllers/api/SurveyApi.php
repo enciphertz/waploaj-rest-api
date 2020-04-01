@@ -79,7 +79,7 @@ class SurveyApi extends CI_Controller
 
                     $customer = $this->Customer->save_survey($survey_data);
 
-                    if (!$customer) {
+                    if (count($customer) < 1) {
                         $returnArr['response'] = 'No survery Answers';
                     } else {
                         $returnArr['status'] = '1';
