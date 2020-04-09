@@ -22,7 +22,7 @@ class EmployeeApi extends CI_Controller
         $this->load->model('Employee');
 
         $this->load->helper(array('cookie', 'date', 'form', 'email'));
-        $this->load->library(array('encryption', 'form_validation'));
+//        $this->load->library(array('encryption', 'form_validation'));
 
         /* Authentication Begin **/
         $headers = $this->input->request_headers();
@@ -33,13 +33,13 @@ class EmployeeApi extends CI_Controller
         if (array_key_exists("X-Token", $headers)) {
             $this->staff_token = $headers['X-Token'];
             try {
-                if (isset($this->driver_token)) {
+                if (isset($this->staff_token)) {
                     $employee = $this->Employee->get_logged_in_employee_info();
                     if ($employee == false && $employee->num_rows() <= 0) {
                         echo json_encode(array("is_logged_out" => "Yes"));
                         die;
                     } else {
-                        $this->employee = $employee->row();
+                        $this->employee = $employee;
                     }
                 }
             } catch (Exception $ex) {

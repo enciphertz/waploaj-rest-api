@@ -1,17 +1,8 @@
 <?php
 
-ini_set('error_reporting', 1);
-ini_set('display_errors', 1);
 
-defined('BASEPATH') OR exit('No direct script access allowed');
-
-
-/**
- * @property  employee
- */
-class SupplierApi extends CI_Controller
+class Attendance
 {
-
     private $staff_token;
     private $employee;
     private $item;
@@ -19,10 +10,10 @@ class SupplierApi extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('Supplier','Employee');
+        $this->load->model('Receiving','Employee','Customer');
 
         $this->load->helper(array('cookie', 'date', 'form', 'email'));
-       // $this->load->library(array('encrypt', 'form_validation'));
+//        $this->load->library(array('encryption', 'form_validation'));
 
         /* Authentication Begin **/
         $headers = $this->input->request_headers();
@@ -53,66 +44,73 @@ class SupplierApi extends CI_Controller
 
     }
 
-
-    public function get_supplier_details()
+    public function checkin()
     {
-
         $returnArr['status'] = '0';
         $returnArr['response'] = '';
-
         try {
-            if (!$this->input->post()) {
-                $returnArr['response'] = "Only POST method is allowed";
-            } else {
-                $supplier_id = $this->input->post('supplier_id');
-
-                if ($supplier_id == '') {
-                    $returnArr['response'] = "Some Parameters are missing";
-                } else {
-                    $supplier = $this->Supplier->get_info($supplier_id);
-
-                    if (count($supplier) < 1) {
-                        $returnArr['response'] = 'No supplier found';
-                    } else {
+            if(!$this->input->post()){
+                $returnArr['response'] = "Only Post Method allowed";
+            }else{
+                $attendance_data = array(
+                    'customer_id' => $this->input->post('customer_id'),
+                    'employee_id' => $this->input->post('employee_id'),
+                    'checkin_time' => $this->input->post('checkin_time'),
+                    'checkout_time' => $this->input->post('checkout_time'),
+                    'latitude' => $this->input->post('latitude'),
+                    'longitude' =>$this->input->post('longitude')
+                );
+                if(!isset($attendance_data)){
+                    $returnArr['response'] = "Some parameter is missing";
+                }else{
+                    $attendacce = $this->Customer->save_attendance($attendance_data);
+                    if(!$attendacce){
+                        $returnArr['response'] = "No attendance!";
+                    }else{
                         $returnArr['status'] = '1';
-                        $returnArr['response'] = $supplier;
+                        $returnArr['response'] = $attendacce;
                     }
                 }
             }
-        } catch (Exception $ex) {
+        }catch (Exception $ex){
             $returnArr['response'] = "Error in connection";
             $returnArr['error'] = $ex->getMessage();
         }
         $response = json_encode($returnArr, JSON_PRETTY_PRINT);
         echo $response;
+
     }
 
-
-    public function get_suppliers()
+    public function ads()
     {
-
         $returnArr['status'] = '0';
         $returnArr['response'] = '';
 
         try {
-            if (!$this->input->post()) {
-                $returnArr['response'] = "Only POST method is allowed";
-            } else {
-                $supplier = $this->Supplier->get_all();
-
-                if (count($supplier) < 1) {
-                    $returnArr['response'] = 'No supplier found';
-                } else {
+            if(!$this->input->post()){
+                $returnArr['response'] = "Only Post Method is allowed";
+            }else{
+                $ads_data = array(
+                    'pic_file' =>$this->input->post('pic_file'),
+                    'latitude' =>$this->input->post('latitude'),
+                    'longitude' =>$this->input->post('longitude')
+                );
+                $ad = $this->Customer->save_ads($ads_data);
+                if(!$ad){
+                    $returnArr['response'] = "no ads updated";
+                }else{
                     $returnArr['status'] = '1';
-                    $returnArr['response'] = $supplier->result();
+                    $returnArr['response'] = $ad;
                 }
             }
-        } catch (Exception $ex) {
-            $returnArr['response'] = "Error in connection";
+        }catch (Exception $ex){
+            $returnArr['response'] = " Erro in connection";
             $returnArr['error'] = $ex->getMessage();
         }
         $response = json_encode($returnArr, JSON_PRETTY_PRINT);
         echo $response;
     }
+
+
 
 }

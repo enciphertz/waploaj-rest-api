@@ -1,6 +1,6 @@
 # waploaj-rest-api
 
- This extend of field force android app that capture  field sales or service information in real time using communications technology, typically handheld PDAs, wireless devices, tablet PCs or mobile phones. The captured data is transferred immediately to back-end systems through wireless connectivity.
+ This is extension of field force android app that capture  field sales or service information in real time using communications technology, typically handheld PDAs, wireless devices, tablet PCs or mobile phones. The captured data is transferred immediately to back-end systems through wireless connectivity.
 
 ## Getting Started
 
